@@ -30,7 +30,7 @@ module.exports = function (app, myDataBase) {
 
     app.route('/register').post((req, res, next) => {
         console.log(req.body.password)
-        const hash = bcrypt.hashSync(req.body.password,12) // HASH the password
+        const hash = bcrypt.hashSync(req.body.password, 12) // HASH the password
         console.log(hash);
         myDataBase.findOne({ username: req.body.username }, (err, user) => {
             if (err) {
@@ -51,9 +51,9 @@ module.exports = function (app, myDataBase) {
                 })
             }
         })
-        
+
     },
- 
+
         passport.authenticate('local', { failureRedirect: '/' }),
         (req, res, next) => {
             res.redirect('/profile');
@@ -62,8 +62,15 @@ module.exports = function (app, myDataBase) {
 
     app.route('/auth/github').get(passport.authenticate('github'))
 
-    app.route('/auth/github/callback').get(passport.authenticate('github', 
-    {failureRedirect: '/'}, (req, res) => res.redirect('/profile')));
+    app.route('/auth/github/callback').get(passport.authenticate('github',
+        { failureRedirect: '/' }, (req, res) => {
+            res.session.user_id = req.user_id
+            res.redirect('/chat')
+        }));
+
+    app.get('/chat', ensureAuthenticated, (req, res) => {
+        res.render('pug/chat', { user: req.user })
+    });
 
 
 
@@ -82,3 +89,4 @@ module.exports = function (app, myDataBase) {
     // Serialization and deserialization here...
 
 }
+
