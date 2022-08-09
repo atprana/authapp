@@ -70,7 +70,7 @@ myDB(async client => {
     ++currentUsers;
     io.emit('user count', currentUsers);
     // console.log('A user has connected');
-    console.log('user ' + socket.request.user.name + ' connected');
+    console.log('user ' + socket.request.user.username + ' connected');
 
     // -------------- listen on disconnect 
     socket.on('disconnect', () => {
